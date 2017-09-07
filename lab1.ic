@@ -1,0 +1,65 @@
+#define lMotor 0
+#define rMotor 3
+#define sensor 2
+#define white 247                          //IR sensor is around <247 light sensor <50 
+#define turnTime 2.00
+
+void main()
+{   
+    go();   
+}
+
+void go()
+{
+    while(1)
+      {
+        motor(lMotor, 25);                             //Left motor forward at 50% power 
+        motor(rMotor, 25);                             //right motor forward at 50% power  
+        printf("sensor = %d\n", analog(sensor));       //print to screen
+        if(analog(sensor) <= white)                    //if it senses the white
+          {
+            searchRight();                             //begin searchRight
+        }
+        
+    } 
+}
+
+void searchRight()
+{
+    float time = seconds();                           //set time to the current time in seconds 
+    while(seconds() - time < turnTime)                //while the time elapsed is less than the set turn time limit      
+      {
+        motor(lMotor, 25);                            //turn the bot right
+        motor(rMotor, -25);
+        if(analog(sensor) > white)                    //if it finds the black line
+          {
+            sleep(1.0);                               
+            go();                                     //return to the go function
+        }
+    }
+    searchLeft();                                     //if it times out search left
+}
+
+void searchLeft()
+{
+    float time = seconds();
+    while((seconds() - time) < (turnTime * 5.00))     //same while loop as searchRight with a longer turn time limit
+      {
+        motor(lMotor, -25);                           //turn the motor to the left
+        motor(rMotor, 25);
+        if(analog(sensor) > white)                    //if it finds the black line          
+          {
+            sleep(1.0);                              
+            go();                                     //return to the go function
+        }
+    }
+    
+}
+
+
+//not used
+void stop()
+{
+    motor(lMotor, 0);
+    motor(rMotor, 0);
+}
