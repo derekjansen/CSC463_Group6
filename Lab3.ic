@@ -1,0 +1,55 @@
+#define rMotor 3
+#define lMotor 0
+#define rSensor 2
+#define lSensor 6
+
+
+void main()
+{
+    while(1)
+    {
+        int delta = digital(rSensor) - digital(lSensor);
+        int fuzz = fuzzify(delta);
+        
+    }
+}
+
+void fuzzy(int delta)
+{
+    if(delta < - 128 && delta <= -255)
+    {
+        //negative big
+        float out = fuzzNB(delta);
+        motor(rMotor, 100 * out);
+        motor(lMotor, 0 * out);
+    }
+    else if(delta => -128 && delta < 0)
+    {
+        //negative small
+        float out = fuzzNS(delta);
+        motor(rMotor, 75 * out);
+        motor(lMotor, 25 * out);
+    }
+    else if(delta == 0)
+    {
+        //zero
+        motor(rMotor, 50);
+        motor(lMotor, 50);
+        
+    }
+    else if(delta > 0 && delta <= 128)
+    {
+        //positive small
+        float out = fuzzPS(delta);
+        motor(rMotor, 25 * out);
+        motor(lMotor, 75 * out);
+    }
+    else if( delta > 128 && delta <= 255)
+    {
+        //positive big
+        float out = fuzzPB(delta);
+        motor(rMotor, 0 * out);
+        motor(lMotor, 100 * out); 
+    }
+}
+
