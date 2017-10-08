@@ -1,55 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #define rMotor 3
 #define lMotor 0
 #define rSensor 2
 #define lSensor 6
 
+typedef struct fuzzifiedInputs
+{
+    float fuzz1;
+    float fuzz2;
+}    
 
 void main()
 {
     while(1)
-    {
+      {
         int delta = digital(rSensor) - digital(lSensor);
         int fuzz = fuzzify(delta);
         
     }
 }
 
-void fuzzy(int delta)
+
+//int fuzz is supposed to be the fuzzification function
+int[] fuzzify(int delta)
 {
+    int pos = 0;
+    int[] output = int[2];
+    //NN
     if(delta < - 128 && delta <= -255)
     {
-        //negative big
-        float out = fuzzNB(delta);
-        motor(rMotor, 100 * out);
-        motor(lMotor, 0 * out);
+        int fuzz = 1;
+        output[pos] = fuzz;
+        pos++;
     }
-    else if(delta => -128 && delta < 0)
+    //N
+    if(delta >= -255 && delta < 0)
     {
-        //negative small
-        float out = fuzzNS(delta);
-        motor(rMotor, 75 * out);
-        motor(lMotor, 25 * out);
+        int fuzz = 1;
+        output[pos] = fuzz;
+        pos++;
     }
-    else if(delta == 0)
+    //Z
+    if(delta > -128 && delta <= 128)
     {
-        //zero
-        motor(rMotor, 50);
-        motor(lMotor, 50);
-        
+        int fuzz = 1;
+        output[pos] = fuzz;
+        pos++;
     }
-    else if(delta > 0 && delta <= 128)
+    //P
+    if(delta >= 0 && delta < 255)
     {
-        //positive small
-        float out = fuzzPS(delta);
-        motor(rMotor, 25 * out);
-        motor(lMotor, 75 * out);
+        int fuzz = 1;
+        output[pos] = fuzz;
+        pos++;
     }
-    else if( delta > 128 && delta <= 255)
+    //PP
+    if(delta > 128 && delta <= 255)
     {
-        //positive big
-        float out = fuzzPB(delta);
-        motor(rMotor, 0 * out);
-        motor(lMotor, 100 * out); 
+        int fuzz = 1;
+        output[pos] = fuzz;
+        pos++;
     }
+    //Stop
+    else
+    {
+        motor(lMotor, 0);
+        motor(rMotor, 0);
+    }  
 }
 
