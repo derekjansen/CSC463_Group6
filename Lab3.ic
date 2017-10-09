@@ -18,7 +18,8 @@ float crispRout;
 void main()
 {
     while(1)
-    {
+      {
+        //calculates delta
         int delta = analog(lSensor) - analog(rSensor);
         printf("delta: %d\n", delta);
         fuzzy((float)delta);
@@ -29,8 +30,7 @@ void main()
     }
 }
 
-/////NEED TO FIGURE OUT POSSIBLE DELTA VALUES AND SET ACCORDINGLY
-
+//fuzzify method
 void fuzzy(float delta)
 {
     if (delta < nLimit && delta >= nnLimit)
@@ -46,7 +46,8 @@ void fuzzy(float delta)
        {
           delta = ((nLimit) - delta) / ((nLimit) - (-62.5));
        }
-
+        
+        //call defuzzification on both motors
        crispRout = defuzz(delta,100.0);
        crispLout = defuzz(delta,0.0); 
     }
@@ -65,6 +66,7 @@ void fuzzy(float delta)
           delta = ((lZero) - delta) / ((lZero) - (-14.5));
        }
         
+        //call defuzzification on both motors
         crispRout = defuzz(delta,75.0);
         crispLout = defuzz(delta,25.0);
     }
@@ -84,7 +86,7 @@ void fuzzy(float delta)
           delta = ((pLimit) - delta) / ((pLimit) - (14.5));
        }
 
-        
+        //call defuzzification on both motors
         crispRout = defuzz(delta,25.0);
         crispLout = defuzz(delta,75.0);
     }
@@ -105,6 +107,7 @@ void fuzzy(float delta)
           delta = ((ppLimit) - delta) / ((ppLimit) - (62.5));
        }
         
+        //call defuzzification on both motors
         crispRout = defuzz(delta,0.0);
         crispLout = defuzz(delta,100.0);
     }
@@ -117,8 +120,10 @@ void fuzzy(float delta)
     }
 }
 
+//defuzzification function
 float defuzz(float delta, float motorSpeed)
 { 
+    //makes sure no motor input is negative
     if(delta < 0.00)
     {
         return -1.00 * (delta * motorSpeed);
