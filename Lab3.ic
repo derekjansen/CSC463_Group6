@@ -1,73 +1,129 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #define rMotor 3
 #define lMotor 0
-#define rSensor 2
+#define rSensor 3
 #define lSensor 6
 
-typedef struct fuzzifiedInputs
-{
-    float fuzz1;
-    float fuzz2;
-}    
+#define nnLimit -100.0
+#define nLimit -25.0
+#define lZero -4.0
+#define uZero 4.0
+#define pLimit 25.0
+#define ppLimit 100.0
+
+
+float crispLout;
+float crispRout;
+
 
 void main()
 {
     while(1)
-      {
-        int delta = digital(rSensor) - digital(lSensor);
-        int fuzz = fuzzify(delta);
+    {
+        int delta = analog(lSensor) - analog(rSensor);
+        printf("delta: %d\n", delta);
+        fuzzy((float)delta);
         
+        //actual motor output here
+        motor(lMotor,(int)crispLout);
+        motor(rMotor,(int)crispRout); 
     }
 }
 
+/////NEED TO FIGURE OUT POSSIBLE DELTA VALUES AND SET ACCORDINGLY
 
-//int fuzz is supposed to be the fuzzification function
-int[] fuzzify(int delta)
+void fuzzy(float delta)
 {
-    int pos = 0;
-    int[] output = int[2];
-    //NN
-    if(delta < - 128 && delta <= -255)
+    if (delta < nLimit && delta >= nnLimit)
     {
-        int fuzz = 1;
-        output[pos] = fuzz;
-        pos++;
+       //negative big
+
+       //THIS IS THE LINEAR INTERPOLATION
+       if(delta < -62.5)
+       {
+          delta = (delta - (nnLimit)) / ((-62.5) - (nnLimit));
+       }
+       else
+       {
+          delta = ((nLimit) - delta) / ((nLimit) - (-62.5));
+       }
+
+       crispRout = defuzz(delta,100.0);
+       crispLout = defuzz(delta,0.0); 
     }
-    //N
-    if(delta >= -255 && delta < 0)
+    
+    if(delta >= nLimit && delta < lZero)
     {
-        int fuzz = 1;
-        output[pos] = fuzz;
-        pos++;
+        //negative small
+
+       //THIS IS THE LINEAR INTERPOLATION
+       if(delta < -14.5)
+       {
+          delta = (delta - (nLimit)) / ((-14.5) - (nLimit));
+       }
+       else
+       {
+          delta = ((lZero) - delta) / ((lZero) - (-14.5));
+       }
+        
+        crispRout = defuzz(delta,75.0);
+        crispLout = defuzz(delta,25.0);
     }
-    //Z
-    if(delta > -128 && delta <= 128)
+   
+    if(delta > uZero && delta <= pLimit)
     {
-        int fuzz = 1;
-        output[pos] = fuzz;
-        pos++;
+        //positive small
+
+
+       //THIS IS THE LINEAR INTERPOLATION
+       if(delta < 14.5)
+       {
+          delta = (delta - (uZero)) / ((14.5) - (uZero));
+       }
+       else
+       {
+          delta = ((pLimit) - delta) / ((pLimit) - (14.5));
+       }
+
+        
+        crispRout = defuzz(delta,25.0);
+        crispLout = defuzz(delta,75.0);
     }
-    //P
-    if(delta >= 0 && delta < 255)
+    
+    if( delta > pLimit && delta <= ppLimit)
     {
-        int fuzz = 1;
-        output[pos] = fuzz;
-        pos++;
+     
+
+        //positive big
+
+       //THIS IS THE LINEAR INTERPOLATION
+       if(delta < 62.5)
+       {
+          delta = (delta - (pLimit)) / ((62.5) - (pLimit));
+       }
+       else
+       {
+          delta = ((ppLimit) - delta) / ((ppLimit) - (62.5));
+       }
+        
+        crispRout = defuzz(delta,0.0);
+        crispLout = defuzz(delta,100.0);
     }
-    //PP
-    if(delta > 128 && delta <= 255)
-    {
-        int fuzz = 1;
-        output[pos] = fuzz;
-        pos++;
-    }
-    //Stop
+    
     else
     {
-        motor(lMotor, 0);
-        motor(rMotor, 0);
-    }  
+        //zero
+        crispRout = 50.0;
+        crispLout = 50.0;  
+    }
 }
 
+float defuzz(float delta, float motorSpeed)
+{ 
+    if(delta < 0.00)
+    {
+        return -1.00 * (delta * motorSpeed);
+    }
+    
+    return delta * motorSpeed;                    //interpolated delta multiplied by the set
+      //multiplication rate we want for each category
+}

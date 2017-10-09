@@ -1,0 +1,80 @@
+#define rMotor 3
+#define lMotor 0
+#define rSensor 3
+#define lSensor 6
+
+#define nnLimit -100.0
+#define nLimit -25.0
+#define lZero -4.0
+#define uZero 4.0
+#define pLimit 25.0
+#define ppLimit 100.0
+
+float crispLout;
+float crispRout;
+
+void main()
+{
+    while(1)
+    {
+        int delta = analog(lSensor) - analog(rSensor);
+        printf("delta: %d\n", delta);
+        fuzzy((float)delta);
+        
+        //actual motor output here
+        motor(lMotor,(int)crispLout);
+        motor(rMotor,(int)crispRout); 
+    }
+}
+
+/////NEED TO FIGURE OUT POSSIBLE DELTA VALUES AND SET ACCORDINGLY
+
+void fuzzy(float delta)
+{
+    if (delta < nLimit && delta >= nnLimit)
+    {
+       //negative big
+
+       crispRout = defuzz(-1.0 * delta,1.0);
+       crispLout = defuzz(-1.0 * delta,0.0); 
+    }
+    
+    if(delta >= nLimit && delta < lZero)
+    {
+        //negative small
+        
+        crispRout = defuzz(-1.0 * delta,0.75);
+        crispLout = defuzz(-1.0 * delta,0.25);
+    }
+   
+    if(delta > uZero && delta <= pLimit)
+    {
+        //positive small
+        
+        crispRout = defuzz(delta,0.25);
+        crispLout = defuzz(delta,0.75);
+    }
+    
+    if( delta > pLimit && delta <= ppLimit)
+    {
+     
+
+        //positive big
+        
+        crispRout = defuzz(delta,0.0);
+        crispLout = defuzz(delta,1.0);
+    }
+    
+    else
+    {
+        //zero
+        crispRout = 50.0;
+        crispLout = 50.0;  
+    }
+}
+
+float defuzz(float delta, float motorSpeed)
+{
+    return delta * motorSpeed;                    //interpolated delta multiplied by the set
+      //multiplication rate we want for each category
+}
