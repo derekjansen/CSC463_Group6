@@ -10,9 +10,9 @@ float rMotorSpeed = 0;   //right motor speed
 void main()
 {
     while(1)
-    {
+      {
         calcMotorSpeed(analog(lSensor), analog(rSensor), analog(reflecto));                               //calculalte motor speeds
-    
+        
         motor(lMotor, lMotorSpeed);                          //calls to motor speed
         motor(rMotor, rMotorSpeed);                          //calls to motor
     }
@@ -25,9 +25,10 @@ void calcMotorSpeed(float lSensor, float rSensor, float reflecto)
         lMotorSpeed = -25.0;
         rMotorSpeed = 50.0;
     }
-    else if((lSensor < 100 && rSensor < 100) && reflecto < 200)
+    if((lSensor < 100 && rSensor < 100) && reflecto < 200)
     {
-        //turn 180 degrees
+        lMotorSpeed = -25.0;
+        rMotorSpeed = 50.0;
     }
     else  //go straight
     {
