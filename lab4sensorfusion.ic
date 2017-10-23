@@ -1,9 +1,9 @@
+/*
 GROUP 6
-
-Caleb Bushman
-Jake Moore
-Derek Grove
-
+JAKE MOORE
+DEREK GROVE
+CALEB BUSHMAN
+*/
 
 #define lMotor 0      //left motor port
 #define rMotor 3      //right motor port
@@ -15,88 +15,77 @@ Derek Grove
 float lMotorSpeed = 0;   //left motor speed
 float rMotorSpeed = 0;   //right motor speed
 
-
-/*
-    The main loop that constantly calls calcMotorSpeed to determine motor speeds
-    and then continuously sets the motors accordingly.
-*/
 void main()
 {
     while(1)
       {
+        //calculates motor speed based on the sensor readings
         calcMotorSpeed(analog(lSensor), analog(rSensor), analog(lReflecto), analog(rReflecto));
+        
         motor(lMotor, lMotorSpeed);               
         motor(rMotor, rMotorSpeed); 
     }
 }
 
-
-
-/*
-    Calculates the motor speed based off of sensor readings from both the IR sensor 
-    and the two Photo sensors.
-*/
 void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflecto)
 {
+    //calculates delta
     float delta = lSensor - rSensor;
     
-    //low light 
-    if(delta < 5 && delta > -5)
+    //if there is no change in delta just use reflectos normally
+    if(delta < 10 && delta > -10)
       {
-        //straight close to wall
         if(lReflecto < 200 || rReflecto < 200)
           {
-            lMotorSpeed = 50;
-            rMotorSpeed = -25;
+            lMotorSpeed = 50.0;
+            rMotorSpeed = -25.0;
         }
         else
-         {
-            lMotorSpeed = 50;
-            rMotorSpeed = 50;
+          {
+            //straight
+            lMotorSpeed = 50.0;
+            rMotorSpeed = 50.0;
         }
     }
     
-    //prominant light to right 
-    if(delta > 5)
-    {
-        //close to wall on left
+    //if delta is less than 10 use left sensors
+    if(delta > 10)
+      {
+        //turn if reflecto gets too close
         if(lReflecto < 200)
           {
-            //turn right sharp
-            lMotorSpeed = -25;
-            rMotorSpeed = 50;
+            lMotorSpeed = -25.0;
+            rMotorSpeed = 50.0;
         }
         else
           {
             //turn right slower
-            lMotorSpeed = 10;
-            rMotorSpeed = 50;
-          }
+            lMotorSpeed = 10.0;
+            rMotorSpeed = 50.0;
+        }
     }
     
-    //prominant light on left
-    if(delta < -5)
+    //if delta is less than 10 use right sensor
+    if(delta < 10)
       {
-        //close to wall on right
+        //checks reflecto for collision
         if(rReflecto < 200)
           {
             //turn left sharp
-            lMotorSpeed = 50;
-            rMotorSpeed = -25;
+            lMotorSpeed = 50.0;
+            rMotorSpeed = -25.0;
         }
         else
           {
             //turn left slower
-            lMotorSpeed = 50;
-            rMotorSpeed = 10;
+            lMotorSpeed = 50.0;
+            rMotorSpeed = 10.0;
         }
     }
-    
     else
-    {
-        lMotorSpeed = 50;
-        rMotorSpeed = 50;
+      {
+        //go straight
+        lMotorSpeed = 50.0;
+        rMotorSpeed = 50.0;
     }
-    
-    
 }
