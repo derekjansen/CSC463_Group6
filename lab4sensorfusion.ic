@@ -10,7 +10,7 @@ Derek Grove
 #define lSensor 2     //left sensor port
 #define rSensor 3     //right sensor port
 #define lReflecto 6   //reflecto port
-#define rReflecto 7
+#define rReflecto 5
 
 float lMotorSpeed = 0;   //left motor speed
 float rMotorSpeed = 0;   //right motor speed
