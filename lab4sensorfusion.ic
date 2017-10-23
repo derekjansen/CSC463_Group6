@@ -19,8 +19,11 @@ void main()
 void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflecto)
 {
     float delta = lSensor - rSensor;
+    
+    //low light 
     if(delta < 10 && delta > -10)
       {
+        //straight close to wall
         if(lReflecto < 200 || rReflecto < 200)
           {
             //turn
@@ -31,20 +34,27 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
         }
     }
     
+    //prominant light to right 
     if(delta > 10)
     {
+        //close to wall on left
         if(lReflecto < 200)
           {
             //turn
         }
         else
           {
+          
+          *****WE SHOULD MAKE IT STILL TURN HERE JUST NOT AS HARSHLY. SINCE IT SENSE MORE LIGHT TO ONE SIDE*****
+          
             //straight
         }
     }
     
-    if(delta < 10)
+    //prominant light on left
+    if(delta < -10)
       {
+        //close to wall on right
         if(rReflecto < 200)
           {
             //turn
