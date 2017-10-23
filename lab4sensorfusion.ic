@@ -33,9 +33,9 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
     float delta = lSensor - rSensor;
     
     //if there is no change in delta just use reflectos normally
-    if(delta < 10 && delta > -10)
+    if(delta < 15 && delta > -15)
       {
-        if(lReflecto < 200 || rReflecto < 200)
+        if(lReflecto < 230 || rReflecto < 230)
           {
             lMotorSpeed = 50.0;
             rMotorSpeed = -25.0;
@@ -49,10 +49,10 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
     }
     
     //if delta is less than 10 use left sensors
-    if(delta > 10)
+    if(delta > 15)
       {
         //turn if reflecto gets too close
-        if(lReflecto < 200)
+        if(lReflecto < 230)
           {
             lMotorSpeed = -25.0;
             rMotorSpeed = 50.0;
@@ -66,10 +66,10 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
     }
     
     //if delta is less than 10 use right sensor
-    if(delta < 10)
+    if(delta < 15)
       {
         //checks reflecto for collision
-        if(rReflecto < 200)
+        if(rReflecto < 230)
           {
             //turn left sharp
             lMotorSpeed = 50.0;
