@@ -21,7 +21,7 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
     float delta = lSensor - rSensor;
     
     //low light 
-    if(delta < 10 && delta > -10)
+    if(delta < 5 && delta > -5)
       {
         //straight close to wall
         if(lReflecto < 200 || rReflecto < 200)
@@ -35,7 +35,7 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
     }
     
     //prominant light to right 
-    if(delta > 10)
+    if(delta > 5)
     {
         //close to wall on left
         if(lReflecto < 200)
@@ -52,7 +52,7 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
     }
     
     //prominant light on left
-    if(delta < -10)
+    if(delta < -5)
       {
         //close to wall on right
         if(rReflecto < 200)
@@ -64,4 +64,12 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
             //straight
         }
     }
+    
+    else
+    {
+        lMotorSpeed = 50;
+        rMotorSpeed = 50;
+    }
+    
+    
 }
