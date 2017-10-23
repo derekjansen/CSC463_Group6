@@ -1,0 +1,57 @@
+#define lMotor 0      //left motor port
+#define rMotor 3      //right motor port
+#define lSensor 2     //left sensor port
+#define rSensor 3     //right sensor port
+#define lReflecto 6   //reflecto port
+#define rReflecto 7
+
+float lMotorSpeed = 0;   //left motor speed
+float rMotorSpeed = 0;   //right motor speed
+
+void main()
+{
+    while(1)
+      {
+        calcMotorSpeed(analog(lSensor), analog(rSensor), analog(lReflecto), analog(rReflecto));
+    }
+}
+
+void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflecto)
+{
+    float delta = lSensor - rSensor;
+    if(delta < 10 && delta > -10)
+      {
+        if(lReflecto < 200 || rReflecto < 200)
+          {
+            //turn
+        }
+        else
+          {
+            //go straight
+        }
+    }
+    
+    if(delta > 10)
+    {
+        if(lReflecto < 200)
+          {
+            //turn
+        }
+        else
+          {
+            //straight
+        }
+    }
+    
+    if(delta < 10)
+      {
+        if(rReflecto < 200)
+          {
+            //turn
+        }
+        else
+          {
+            //straight
+        }
+    }
+}
