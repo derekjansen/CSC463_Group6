@@ -46,11 +46,12 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
         //straight close to wall
         if(lReflecto < 200 || rReflecto < 200)
           {
-            //turn
+            lMotorSpeed = 50;
+            rMotorSpeed = -25;
         }
         else
-          {
-            //go straight
+         {
+            ????
         }
     }
     
@@ -60,15 +61,16 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
         //close to wall on left
         if(lReflecto < 200)
           {
-            //turn
+            //turn right sharp
+            lMotorSpeed = -25;
+            rMotorSpeed = 50;
         }
         else
           {
-          
-          *****WE SHOULD MAKE IT STILL TURN HERE JUST NOT AS HARSHLY. SINCE IT SENSE MORE LIGHT TO ONE SIDE*****
-          
-            //straight
-        }
+            //turn right slower
+            lMotorSpeed = 10;
+            rMotorSpeed = 50;
+          }
     }
     
     //prominant light on left
@@ -77,11 +79,15 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
         //close to wall on right
         if(rReflecto < 200)
           {
-            //turn
+            //turn left sharp
+            lMotorSpeed = 50;
+            rMotorSpeed = -25;
         }
         else
           {
-            //straight
+            //turn left slower
+            lMotorSpeed = 50;
+            rMotorSpeed = 10;
         }
     }
     
