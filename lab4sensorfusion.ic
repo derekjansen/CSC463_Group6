@@ -51,7 +51,8 @@ void calcMotorSpeed(float lSensor, float rSensor, float lReflecto, float rReflec
         }
         else
          {
-            ????
+            lMotorSpeed = 50;
+            rMotorSpeed = 50;
         }
     }
     
