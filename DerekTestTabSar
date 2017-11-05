@@ -1,0 +1,159 @@
+#define lMotor 0      //left motor port
+#define rMotor 3      //right motor port
+#define leftFront 2   //left front touch port
+#define rightFront 3  //right front touch port
+#define leftBack 4    //left back touch port
+#define rightBack 5   //right back touch port
+
+float lMotorSpeed = 0.00;
+float rMotorSpeed = 0.00;
+
+int lastActionIndex = 0;
+
+
+//////////////////////////////////////////////////
+
+//array of actions to call 
+int[] actions = [0,0,0];
+//forward, turn left, turn right
+
+//////////////////////// Main Code ////////////////////
+
+void main()
+{
+     while(1)
+     {
+        //check to see if any sensors are hit
+        if (checkEnvironment())
+        {
+            //stop motors
+            //subtract a a tally from the last action taken
+            actions[lastActionIndex]--;
+            
+            //choose new action
+            chooseAction;
+        }
+        else
+        {
+          //didnt hit sensors so reward
+          actions[LastActionIndex]++;
+          //choose new action
+          chooseAction;
+        }
+      
+        //motot(leftMotor,50);
+        //morot(rightMotor,50);
+        printf("%f", reward);
+        sleep(0.5);
+     }
+}
+
+void chooseAction()
+{
+        //if the last action is foward 
+        if((lastActionIndex == 0) && (checkEnvironment() = null))
+        {
+          lastActionIndex = 0;;
+          
+        }
+        else
+        {
+          //compare all of the actions values to the current one and pick the highest
+          int i = 0;
+          int y = 0;
+          while(actions[i] != null)
+          {
+            //compare the actions to see what is the highest
+            if(actions[i] > actions[y])
+            {
+              //y will be index with the largest value
+              y = actions[i];
+            }
+            i++;
+          }
+
+          if(y = lastActionIndex)
+          {
+            lastActionIndex = 0;
+          }
+          else
+          {
+            lastActionIndex = y;
+          }
+
+         }
+         
+          takeAction(lastActionTaken);
+}
+
+void takeAction(int number)
+{
+  if(number == 0)
+  {
+    moveForward();
+  }
+  else if (number == 1)
+  {
+    turnLeft();
+  }
+  else if (number == 2)
+  {
+    moveRight();
+  }
+}
+
+
+
+
+////////////Actions/////////////////////
+
+int checkEnvironment()
+{
+    if(digital(leftFront))
+    {
+      return leftFront;
+    }
+    if(digital(rightFront))
+    {
+      return frontRight;
+    }
+    if(digital(leftBack))
+    {
+      return leftBack;
+    }
+    if(digital(rightBack))
+    {
+      return rightBack;
+    }
+      return null;
+}
+
+
+
+void moveForward()
+{
+    lMotorSpeed = 50.0;
+    rMotorSpeed = 50.0;
+}
+
+void turnLeft()
+{
+    //moveBackward();
+    lMotorSpeed = -25.0;
+    rMotorSpeed = 75.0;
+}
+
+void turnRight()
+{
+    //moveBackward();
+    lMotorSpeed = 75.0;
+    rMotorSpeed = -25.0;
+}
+
+
+
+void moveBackward()
+{
+    lMotorSpeed = -50.0;
+    rMotorSpeed = -50.0;
+}
