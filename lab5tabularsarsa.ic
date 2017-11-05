@@ -5,60 +5,88 @@
 #define leftBack 4    //left back touch port
 #define rightBack 5   //right back touch port
 
-float lMotorSpeed = 0.00;
-float rMotorSpeed = 0.00;
+#define NUM_REWARDS 3
 
-float reward = 0.00;
+int lastActionIndex = 0;
 
-typedef struct rewards
-{
-    int fns = .1;
-    int fs = -.1;
-    int bns = .001;
-    int bs = -.001;
-    int rns = .01;
-    int rs = -.01;
-    int lns = .01;
-    int ls = -.01;
-}
+float actionRewards = {0.00, 0.00, 0.00};
 
-//array of function pointers to the actions
-typedef void(*actions[4])(void) = 
-{
-    &moveForward, 
-    &moveBackward, 
-    &turnLeft, 
-    &turnRight
-}
+float compileTime = seconds();
 
 void main()
 {
     for(;;)
+      {
+         if(digital(leftFront) == 1 || digital(rightFront) == 1 || digital(leftBack) == 1 || digital(rightBack) == 1)
+          {
+            actionRewards[lastActionIndex] -= .1;
+            executeAction(chooseAction());
+        } 
+        else
+          {
+            actionRewards[lastActionIndex] += .1;
+            executeAction(chooseAction());
+        }
+    }
+}
+
+int chooseAction()
+{
+    int index = 0;
+    float max = 0.00;
+    int i1 = 0;
+    for(i1 = 0; i1 < NUM_REWARDS; i1++)
     {
-        
+        if(actionRewards[NUM_REWARDS] > max)
+        {
+            max = actionRewards[i1];
+            index = i1;
+        }
+    }
+    return index;
+}
+
+void executeAction(int index)
+{
+    switch(index)
+    {
+        case 0:
+          moveForward();
+          break;
+        case 1:
+          turnLeft()
+          break;
+        case 2:
+          turnRight()
+          break;
     }
 }
 
 void moveForward()
 {
-    lMotorSpeed = 50.0;
-    rMotorSpeed = 50.0;
-}
-
-void moveBackward()
-{
-    lMotorSpeed = -50.0;
-    rMotorSpeed = -50.0;
+    motor(lMotor, 50.0);
+    motor(rMotor, 50.0);
+    lastActionIndex = 0;
 }
 
 void turnLeft()
 {
-    lMotorSpeed = -25.0;
-    rMotorSpeed = 75.0;
+    motor(lMotor, -50.0);
+    motor(rMotor, 50.0);
+    sleep(2.0);
+    
+    motor(lMotor, -25.0);
+    motor(rMotor, 75.0);
+    lastActionIndex = 1;
 }
 
 void turnRight()
 {
-    lMotorSpeed = 75.0;
-    rMotorSpeed = -25.0;
+    motor(lMotor, -50.0);
+    motor(rMotor, 50.0);
+    sleep(2.0);
+    
+    motor(lMotor, 75.0);
+    motor(rMotor, -25.0);
+    lastActionIndex = 2;
 }
