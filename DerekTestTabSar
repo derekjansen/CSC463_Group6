@@ -5,8 +5,8 @@
 #define leftBack 4    //left back touch port
 #define rightBack 5   //right back touch port
 
-float lMotorSpeed = 0.00;
-float rMotorSpeed = 0.00;
+int lMotorSpeed = 0;
+int rMotorSpeed = 0;
 
 int lastActionIndex = 0;
 
@@ -41,10 +41,10 @@ void main()
           chooseAction;
         }
       
-        //motot(leftMotor,50);
-        //morot(rightMotor,50);
-        printf("%f", reward);
-        sleep(0.5);
+        //motor(leftMotor,lMotorSpeed);
+        //motor(rightMotor,rMotorSpeed);
+        printf("%d/n", lastActionIndex);
+       // sleep(0.5);
      }
 }
 
@@ -102,58 +102,60 @@ void takeAction(int number)
   }
 }
 
-
-
-
 ////////////Actions/////////////////////
 
-int checkEnvironment()
+boolean checkEnvironment()
 {
     if(digital(leftFront))
     {
-      return leftFront;
+      return true;
     }
     if(digital(rightFront))
     {
-      return frontRight;
+      return true;
     }
     if(digital(leftBack))
     {
-      return leftBack;
+      return true;
     }
     if(digital(rightBack))
     {
-      return rightBack;
+      return true;
     }
-      return null;
+    //else
+    return false;
 }
 
 
 
 void moveForward()
 {
-    lMotorSpeed = 50.0;
-    rMotorSpeed = 50.0;
+   motor(leftMotor,50);
+   motor(rightMotor,50);
+   delay(0.5);
 }
 
 void turnLeft()
 {
-    //moveBackward();
-    lMotorSpeed = -25.0;
-    rMotorSpeed = 75.0;
+    moveBackward();
+    motor(leftMotor, -25);
+    motor(rightMotor,75);
+    delay(0.5);
 }
 
 void turnRight()
 {
-    //moveBackward();
-    lMotorSpeed = 75.0;
-    rMotorSpeed = -25.0;
+    moveBackward();
+    motor(leftMotor,75);
+    motor(rightMotor,-25);
+    delay(0.5);
 }
 
 
 
 void moveBackward()
 {
-    lMotorSpeed = -50.0;
-    rMotorSpeed = -50.0;
+   motor(leftMotor, -50);
+   motor(rightMotor, -50);
+   delay(0.5);
 }
