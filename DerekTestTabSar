@@ -1,3 +1,10 @@
+/*
+     Caleb Bushman, Derek Grove, Jacob Moore
+     Robotics Lab 5
+     Tabluar Sarsa 
+*/
+
+
 #define lMotor 0      //left motor port
 #define rMotor 3      //right motor port
 #define leftFront 9   //left front touch port
@@ -23,13 +30,13 @@ void main()
 {
      while(1)
       {
+        //check the environment to see if any sensors are triggered.
         checkEnvironment();
-        //check to see if any sensors are hit
+       
         if (enviroCheck == 1)
           {
             printf("%d ", lastActionIndex);
             printf("Value: %d\n", actions[lastActionIndex]);
-            //stop motors
             //subtract a a tally from the last action taken
             actions[lastActionIndex]--;
             
@@ -39,15 +46,8 @@ void main()
         else
         {
           //didnt hit sensors so reward
-         // actions[lastActionIndex]++;
-          //choose new action
           takeAction(0);
         }
-      
-        //motor(leftMotor,lMotorSpeed);
-        //motor(rightMotor,rMotorSpeed);
-       // printf("%d\n", lastActionIndex);
-       // sleep(0.5);
      }
 }
 
@@ -74,53 +74,9 @@ void chooseAction()
             }
             i++;
           }
-        
-      /*  
-          if(y == lastActionIndex)
-          {
-            if(lastActionIndex == 0)
-            { 
-                if(actions[1] > actions[2])
-                  {
-                     lastActionIndex = 1;
-                }
-                else
-                  {
-                    lastActionIndex = 2;
-                  }
-            }
-            
-            if(lastActionIndex == 1)
-            { 
-                if(actions[0] > actions[2])
-                  {
-                     lastActionIndex = 0;
-                }
-                else
-                  {
-                    lastActionIndex = 2;
-                  }
-            }  
-            
-            if(lastActionIndex == 2)
-            { 
-                if(actions[0] > actions[1])
-                  {
-                     lastActionIndex = 0;
-                }
-                else
-                  {
-                    lastActionIndex = 1;
-                  }
-            }  
-            
-            */
-            
-         // }
-          //else
-          //{
+          
             lastActionIndex = y;
-         // }
+         
 
          }
          
@@ -151,11 +107,13 @@ int checkEnvironment()
     {
         enviroCheck = 1;
         actions[1]++;
+        actions[2]--;
     }
     else if(digital(rightFront))
     {
         enviroCheck = 1;
         actions[2]++;
+        actions[1]--;
     }
     else if(digital(leftBack))
     {
@@ -176,10 +134,8 @@ int checkEnvironment()
 }
 
 
-
 void moveForward()
 {
-   
    motor(lMotor,50);
    motor(rMotor,50);
    sleep(0.2);
@@ -200,8 +156,6 @@ void turnRight()
     motor(rMotor,-25);
     sleep(0.3);
 }
-
-
 
 void moveBackward()
 {
