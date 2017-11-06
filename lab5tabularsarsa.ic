@@ -5,38 +5,54 @@
 #define leftBack 4    //left back touch port
 #define rightBack 5   //right back touch port
 
-#define NUM_REWARDS 3
+#define NUM_REWARDS 3  //number of rewards
 
-int lastActionIndex = 0;
+float lMotorSpeed = 0.00;  //motor speed
+float rMotorSpeed = 0.00;  //motor speed
 
-float actionRewards = {0.00, 0.00, 0.00};
-
-float compileTime = seconds();
+int lastActionIndex = 0;   //index of last action
+float actionRewards[NUM_REWARDS] = {0.00, 0.00, 0.00};    //rewards calculated
 
 void main()
 {
-    for(;;)
-      {
-         if(digital(leftFront) == 1 || digital(rightFront) == 1 || digital(leftBack) == 1 || digital(rightBack) == 1)
-          {
-            actionRewards[lastActionIndex] -= .1;
-            executeAction(chooseAction());
-        } 
-        else
-          {
-            actionRewards[lastActionIndex] += .1;
-            executeAction(chooseAction());
+    for(;;) {
+        //motor speed
+        motor(lMotor, lMotorSpeed);
+        motor(rMotor, rMotorSpeed);
+        //only do action for 2 seconds
+        int start = seconds();
+        while((seconds() - start) < 2) {   
+            //if sensor hit punish
+            if(digital(leftFront) == 1 || digital(rightFront) == 1 || digital(leftBack) == 1 || digital(rightBack) == 1) {
+                actionRewards[lastActionIndex] -= .1;
+                break;
+            } 
+            //else reward bot
+            if(digital(leftFront) == 0 && digital(rightFront) == 0 && digital(leftBack) == 0 && digital(rightBack) == 0)
+            {
+                actionRewards[lastActionIndex] += .05;
+            }
         }
+        //punish for going too far
+        if((seconds() - start) >= 2)
+          {
+            actionRewards[lastActionIndex] -= .05; 
+        }
+        //chooses action
+        executeAction(chooseAction());
     }
 }
 
+//selects highest action
 int chooseAction()
 {
     int index = 0;
     float max = 0.00;
     int i1 = 0;
+    //walk through the rewards array
     for(i1 = 0; i1 < NUM_REWARDS; i1++)
     {
+        //select max
         if(actionRewards[NUM_REWARDS] > max)
         {
             max = actionRewards[i1];
@@ -46,8 +62,10 @@ int chooseAction()
     return index;
 }
 
+//executes the action based on index
 void executeAction(int index)
 {
+    //uses the index to determine action
     switch(index)
     {
         case 0:
@@ -62,31 +80,47 @@ void executeAction(int index)
     }
 }
 
+//move forward
 void moveForward()
 {
-    motor(lMotor, 50.0);
-    motor(rMotor, 50.0);
+    //motor(lMotor, 50.0);
+    //motor(rMotor, 50.0);
+    
+    lMotorSpeed = 50.0;
+    rMotorSpeed = 50.0;
     lastActionIndex = 0;
 }
 
+//backup then turn left
 void turnLeft()
 {
-    motor(lMotor, -50.0);
-    motor(rMotor, 50.0);
+    //motor(lMotor, -50.0);
+    //motor(rMotor, -50.0);
+    lMotorSpeed = -50.0;
+    rMotorSpeed = -50.0;
     sleep(2.0);
     
-    motor(lMotor, -25.0);
-    motor(rMotor, 75.0);
+    //motor(lMotor, -25.0);
+    //motor(rMotor, 75.0);
+    
+    lMotorSpeed = -25.0;
+    rMotorSpeed = 75.0;
     lastActionIndex = 1;
 }
 
+//backup then turn right
 void turnRight()
 {
-    motor(lMotor, -50.0);
-    motor(rMotor, 50.0);
+    //motor(lMotor, -50.0);
+    //motor(rMotor, 50.0);
+    lMotorSpeed = -50.0;
+    rMotorSpeed = -50.0;
     sleep(2.0);
     
-    motor(lMotor, 75.0);
-    motor(rMotor, -25.0);
+    //motor(lMotor, 75.0);
+    //motor(rMotor, -25.0);
+    
+    lMotorSpeed = 75.0;
+    rMotorSpeed = -25.0;
     lastActionIndex = 2;
 }
