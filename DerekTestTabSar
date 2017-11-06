@@ -1,20 +1,20 @@
 #define lMotor 0      //left motor port
 #define rMotor 3      //right motor port
-#define leftFront 2   //left front touch port
-#define rightFront 3  //right front touch port
-#define leftBack 4    //left back touch port
-#define rightBack 5   //right back touch port
+#define leftFront 9   //left front touch port
+#define rightFront 10  //right front touch port
+#define leftBack 8    //left back touch port
+#define rightBack 7   //right back touch port
 
-int lMotorSpeed = 0;
-int rMotorSpeed = 0;
-
+//int lMotorSpeed = 0;
+//int rMotorSpeed = 0;
+int enviroCheck = 0;
 int lastActionIndex = 0;
 
 
 //////////////////////////////////////////////////
 
 //array of actions to call 
-int[] actions = [0,0,0];
+int actions[3] = {0,0,0};
 //forward, turn left, turn right
 
 //////////////////////// Main Code ////////////////////
@@ -22,28 +22,31 @@ int[] actions = [0,0,0];
 void main()
 {
      while(1)
-     {
+      {
+        checkEnvironment();
         //check to see if any sensors are hit
-        if (checkEnvironment())
-        {
+        if (enviroCheck == 1)
+          {
+            printf("%d ", lastActionIndex);
+            printf("Value: %d\n", actions[lastActionIndex]);
             //stop motors
             //subtract a a tally from the last action taken
             actions[lastActionIndex]--;
             
             //choose new action
-            chooseAction;
+            chooseAction();
         }
         else
         {
           //didnt hit sensors so reward
-          actions[LastActionIndex]++;
+         // actions[lastActionIndex]++;
           //choose new action
-          chooseAction;
+          takeAction(0);
         }
       
         //motor(leftMotor,lMotorSpeed);
         //motor(rightMotor,rMotorSpeed);
-        printf("%d/n", lastActionIndex);
+       // printf("%d\n", lastActionIndex);
        // sleep(0.5);
      }
 }
@@ -51,9 +54,9 @@ void main()
 void chooseAction()
 {
         //if the last action is foward 
-        if((lastActionIndex == 0) && (checkEnvironment() = null))
+        if((lastActionIndex == 0) && (enviroCheck == 0))
         {
-          lastActionIndex = 0;;
+          lastActionIndex = 0;
           
         }
         else
@@ -61,29 +64,67 @@ void chooseAction()
           //compare all of the actions values to the current one and pick the highest
           int i = 0;
           int y = 0;
-          while(actions[i] != null)
+          while(i < 3)
           {
             //compare the actions to see what is the highest
             if(actions[i] > actions[y])
             {
               //y will be index with the largest value
-              y = actions[i];
+              y = i;
             }
             i++;
           }
-
-          if(y = lastActionIndex)
+        
+      /*  
+          if(y == lastActionIndex)
           {
-            lastActionIndex = 0;
-          }
-          else
-          {
+            if(lastActionIndex == 0)
+            { 
+                if(actions[1] > actions[2])
+                  {
+                     lastActionIndex = 1;
+                }
+                else
+                  {
+                    lastActionIndex = 2;
+                  }
+            }
+            
+            if(lastActionIndex == 1)
+            { 
+                if(actions[0] > actions[2])
+                  {
+                     lastActionIndex = 0;
+                }
+                else
+                  {
+                    lastActionIndex = 2;
+                  }
+            }  
+            
+            if(lastActionIndex == 2)
+            { 
+                if(actions[0] > actions[1])
+                  {
+                     lastActionIndex = 0;
+                }
+                else
+                  {
+                    lastActionIndex = 1;
+                  }
+            }  
+            
+            */
+            
+         // }
+          //else
+          //{
             lastActionIndex = y;
-          }
+         // }
 
          }
          
-          takeAction(lastActionTaken);
+          takeAction(lastActionIndex);
 }
 
 void takeAction(int number)
@@ -92,70 +133,79 @@ void takeAction(int number)
   {
     moveForward();
   }
-  else if (number == 1)
+  if (number == 1)
   {
     turnLeft();
   }
-  else if (number == 2)
+  if (number == 2)
   {
-    moveRight();
+    turnRight();
   }
 }
 
 ////////////Actions/////////////////////
 
-boolean checkEnvironment()
+int checkEnvironment()
 {
     if(digital(leftFront))
     {
-      return true;
+        enviroCheck = 1;
+        actions[1]++;
     }
-    if(digital(rightFront))
+    else if(digital(rightFront))
     {
-      return true;
+        enviroCheck = 1;
+        actions[2]++;
     }
-    if(digital(leftBack))
+    else if(digital(leftBack))
     {
-      return true;
+        enviroCheck = 1;
+        actions[1]--;
+        actions[2]--;
     }
-    if(digital(rightBack))
+    else if(digital(rightBack))
     {
-      return true;
+        enviroCheck = 1;
+        actions[1]--;
+        actions[2]--;
     }
-    //else
-    return false;
+    else
+    {
+      enviroCheck = 0;
+    }
 }
 
 
 
 void moveForward()
 {
-   motor(leftMotor,50);
-   motor(rightMotor,50);
-   delay(0.5);
+   
+   motor(lMotor,50);
+   motor(rMotor,50);
+   sleep(0.2);
 }
 
 void turnLeft()
 {
     moveBackward();
-    motor(leftMotor, -25);
-    motor(rightMotor,75);
-    delay(0.5);
+    motor(lMotor, -25);
+    motor(rMotor,75);
+    sleep(0.3);
 }
 
 void turnRight()
 {
     moveBackward();
-    motor(leftMotor,75);
-    motor(rightMotor,-25);
-    delay(0.5);
+    motor(lMotor,75);
+    motor(rMotor,-25);
+    sleep(0.3);
 }
 
 
 
 void moveBackward()
 {
-   motor(leftMotor, -50);
-   motor(rightMotor, -50);
-   delay(0.5);
+   motor(lMotor, -50);
+   motor(rMotor, -50);
+   sleep(1.5);
 }
