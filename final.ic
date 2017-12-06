@@ -20,7 +20,21 @@ void main()
 {
     while(1)
       {
-        //forward
+        followLine();
+                
+        //if you are at an intersection search for blocks
+        if(analog(lLinePhoto) < lineThresh && analog(rLinePhoto) < lineThresh)
+          {
+            searchForBlocks(); 
+        }
+        
+        //figure out how to determine if we are at the end of the maze and can drop the block
+    }
+}
+
+void followLine()
+{
+    //forward
         motor(lMotor, 50);
         motor(rMotor, 50);
         
@@ -45,15 +59,6 @@ void main()
                 sleep(0.1);
             }
         }
-        
-        //if you are at an intersection search for blocks
-        if(analog(lLinePhoto) < lineThresh && analog(rLinePhoto) < lineThresh)
-          {
-            searchForBlocks(); 
-        }
-        
-        //figure out how to determine if we are at the end of the maze and can drop the block
-    }
 }
 
 void searchForBlocks()
@@ -81,7 +86,9 @@ void searchForBlocks()
             }
             
             //turn left
-            left();
+        left();
+        
+        deliverBlock();
         }
         
         //if there is a light on the right
@@ -108,9 +115,36 @@ void searchForBlocks()
             }
             
             //turn right
-            right();
-        }
+        right();
+        
+        deliverBlock();
+        
+    }
+}
 
+void deliverBlock()
+{
+    //travel to end of maze
+    while(analog(lReflecto) > reflectoThresh && analog(rReflecto) > reflectoThresh)
+     {
+        followLine();
+    }
+    //drop block
+    openClaw();
+    //backup
+    backup();
+    sleep(0.5);
+    //turn around
+    left();
+    left();
+    //go back to start
+    while(analog(lReflecto) > reflectoThresh && analog(rReflecto) > reflectoThresh)
+     {
+        followLine();
+    }
+    //turn around
+    left();
+    left();
 }
 
 void left()
