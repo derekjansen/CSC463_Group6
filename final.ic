@@ -20,7 +20,45 @@ void main()
 {
     while(1)
       {
-        //if there is a light on the left
+        //forward
+        motor(lMotor, 50);
+        motor(rMotor, 50);
+        
+        //adjust right
+        if(analog(rLinePhoto) >= lineThresh)
+          {
+            motor(lMotor, 20);
+            motor(rMotor, 70);
+            while(analog(rLinePhoto) < lineThresh)
+              {
+                sleep(0.1);
+            }
+        }
+        
+        //adjust left
+        if(analog(lLinePhoto) >= lineThresh)
+          {
+            motor(lMotor,70);
+            motor(rMotor,20);
+            while(analog(lLinePhoto) < lineThresh)
+              {
+                sleep(0.1);
+            }
+        }
+        
+        //if you are at an intersection search for blocks
+        if(analog(lLinePhoto) < lineThresh && analog(rLinePhoto) < lineThresh)
+          {
+            searchForBlocks(); 
+        }
+        
+        //figure out how to determine if we are at the end of the maze and can drop the block
+    }
+}
+
+void searchForBlocks()
+{
+    //if there is a light on the left
         if(analog(lLightPhoto) > lightThresh)
           {
             //turn left and go to the block
@@ -36,12 +74,13 @@ void main()
             left();
             left();
             
-            //
+            //go back to the line
             while(analog(rLinePhoto) < lineThresh && analog(lLinePhoto) < lineThresh)
               {
                 forward();
             }
             
+            //turn left
             left();
         }
         
@@ -62,14 +101,16 @@ void main()
             left();
             left();
             
+            //go back to the line
             while(analog(rLinePhoto) < lineThresh && analog(lLinePhoto) < lineThresh)
               {
                 forward();
             }
             
+            //turn right
             right();
         }
-    }
+
 }
 
 void left()
