@@ -1,0 +1,63 @@
+#define lMotor 0
+#define rMotor 2
+
+#define clawMotor 3
+
+#define lLightPhoto
+#define rLightPhoto
+
+#define lLinePhoto
+#define rLinePhoto
+
+#define lReflecto
+#define rReflecto
+
+void main()
+{
+    while(1)
+      {
+        if(analog(lLightPhoto) > 100)
+          {
+            left();
+            while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
+              {
+                forward();
+            }
+            closeClaw();
+        }
+    }
+}
+
+void left()
+{
+    motor(rMotor, -25);
+    motor(lMotor, 75);
+    sleep(2.0);
+}
+
+void right()
+{
+    motor(rMotor, 75);
+    motor(lMotor, -25);
+    sleep(2.0);
+}
+
+void forward()
+{
+    motor(lMotor, 50);
+    motor(rMotor, 50);
+}
+
+void openClaw()
+{
+    motor(clawMotor, 25);
+    sleep(0.3);
+    motor(clawMotor, 0);
+}
+
+void closeClaw()
+{
+    motor(clawMotor, -25);
+    sleep(0.3);
+    motor(clawMotor, 0);
+}
