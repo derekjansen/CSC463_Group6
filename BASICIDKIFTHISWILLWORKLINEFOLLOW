@@ -1,5 +1,5 @@
-#define motorL 0
-#define motorR 2
+#define lmotor 0
+#define rmotor 2
 #define claw 3
 #define lineSensorL //ENTER NUMBER
 #define lineSensorR  //ENTER NUMBER
@@ -15,11 +15,9 @@ void main()
 }
 
 
-
-
 //FOLLOW THE LINE ISH
 void followLine
-{  
+{ 
       //go forward
       motor(motorL, 50);
       motor(motorR, 50);
@@ -36,6 +34,7 @@ void followLine
         //reset call to follow
         followLine();
       }
+      
       //if right hits black line
       else if((analog(lineSensorL) >= blackLine))
       {
@@ -48,47 +47,51 @@ void followLine
         //reset call to follow
         followLine();
       }
+      
       //if both hit black line
       else if(((analog(lineSensorL) >= blackLine)) &&  ((analog(lineSensorR) >= blackLine)))
       {
         //stop
-        motor(motorL,0);
-        motor(motorR,0);
+        stop();
+        
         //call junction
         junction();
       }
     
 }
 
+
 //decides what to do at a junction
 void junction()
 {
-
    //(In theory) If a light is found to the left turn left
    if(analog(lLightPhoto) > 100)
    {
-            left();
-            
-            while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
-            {
-                forward();
-            }
-            
-            closeClaw();
+      foundBlock();
    }
    else
    {
       followLine();
-   }
-   
-   
-   
-   
+   }  
 }
 
-void foundBlock();
+//do block stuff
+void foundBlock()
+{  
 
-//////////////BASIC FUNCS///////////
+     left();
+            
+     while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
+            {
+                forward();
+            }
+            
+            stop();
+            closeClaw();
+
+}
+
+////////////// BASIC FUNCS ////////////
 
 void left()
 {
@@ -108,6 +111,12 @@ void forward()
 {
     motor(lMotor, 50);
     motor(rMotor, 50);
+}
+
+void stop()
+{
+   motor(lmotor,0);
+   motor(rmotor,0);
 }
 
 void openClaw()
