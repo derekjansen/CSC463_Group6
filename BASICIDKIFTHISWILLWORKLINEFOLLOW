@@ -82,13 +82,11 @@ void foundBlock()
      left();
             
      while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
-            {
-                forward();
-            }
-            
-            stop();
-            closeClaw();
-
+     {
+        forward();
+     }       
+     stop();
+     closeClaw();
 }
 
 ////////////// BASIC FUNCS ////////////
