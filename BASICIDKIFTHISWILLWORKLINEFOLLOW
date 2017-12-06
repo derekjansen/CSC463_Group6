@@ -1,0 +1,64 @@
+#define motorL 0
+#define motorR 2
+#define claw 3
+#define lineSensorL //ENTER NUMBER
+#define lineSensorR  //ENTER NUMBER
+#define blockSensor //
+
+
+void main()
+{
+   while(1)
+   {
+      followLine();
+   }
+}
+
+//FOLLOW THE LINE ISH
+void followLine
+{  
+      //go forward
+      motor(motorL, 50);
+      motor(motorR, 50);
+
+      //if left hits black line
+      if((analog(lineSensorR) >= blackLine))
+      {
+        motor(motorL,20);
+        motor(motorR,70);
+        while((analog(lineSensorR) < blackLine))
+        {
+          sleep(0.1);
+        }
+        //reset call to follow
+        followLine();
+      }
+      //if right hits black line
+      else if((analog(lineSensorL) >= blackLine))
+      {
+        motor(motorL,70);
+        motor(motorR,20);
+        while((analog(lineSensorL) < blackLine))
+        {
+          sleep(0.1);
+        }
+        //reset call to follow
+        followLine();
+      }
+      //if both hit black line
+      else if(((analog(lineSensorL) >= blackLine)) &&  ((analog(lineSensorR) >= blackLine)))
+      {
+        //stop
+        motor(motorL,0);
+        motor(motorR,0);
+        //call junction
+        junction();
+      }
+    
+}
+
+//decides what to do at a junction
+void junction()
+{
+   
+}
