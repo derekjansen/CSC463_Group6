@@ -14,6 +14,9 @@ void main()
    }
 }
 
+
+
+
 //FOLLOW THE LINE ISH
 void followLine
 {  
@@ -60,5 +63,65 @@ void followLine
 //decides what to do at a junction
 void junction()
 {
-   printf("");  
+
+   //(In theory) If a light is found to the left turn left
+   if(analog(lLightPhoto) > 100)
+   {
+            left();
+            
+            while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
+            {
+                forward();
+            }
+            
+            closeClaw();
+   }
+   else
+   {
+      followLine();
+   }
+   
+   
+   
+   
 }
+
+void foundBlock();
+
+//////////////BASIC FUNCS///////////
+
+void left()
+{
+    motor(rMotor, -25);
+    motor(lMotor, 75);
+    sleep(2.0);
+}
+
+void right()
+{
+    motor(rMotor, 75);
+    motor(lMotor, -25);
+    sleep(2.0);
+}
+
+void forward()
+{
+    motor(lMotor, 50);
+    motor(rMotor, 50);
+}
+
+void openClaw()
+{
+    motor(clawMotor, 25);
+    sleep(0.3);
+    motor(clawMotor, 0);
+}
+
+void closeClaw()
+{
+    motor(clawMotor, -25);
+    sleep(0.3);
+    motor(clawMotor, 0);
+}
+
+
