@@ -60,5 +60,5 @@ void followLine
 //decides what to do at a junction
 void junction()
 {
-   
+   printf("");  
 }
