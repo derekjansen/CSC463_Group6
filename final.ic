@@ -12,18 +12,62 @@
 #define lReflecto
 #define rReflecto
 
+#define lightThresh 100
+#define lineThresh 100
+#define reflectoThresh 20
+
 void main()
 {
     while(1)
       {
-        if(analog(lLightPhoto) > 100)
+        //if there is a light on the left
+        if(analog(lLightPhoto) > lightThresh)
           {
+            //turn left and go to the block
             left();
-            while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
+            //drive to the block
+            while(analog(lReflecto) > reflectoThresh && analog(rReflecto) > reflectoThresh)
               {
                 forward();
             }
+            //close the claw
             closeClaw();
+            //turn around
+            left();
+            left();
+            
+            //
+            while(analog(rLinePhoto) < lineThresh && analog(lLinePhoto) < lineThresh)
+              {
+                forward();
+            }
+            
+            left();
+        }
+        
+        //if there is a light on the right
+        if(analog(rLightPhoto) > lightThresh)
+          {
+            //turn right
+            right();
+            //forward to the block
+            while(analog(lReflecto) > reflectoThresh && analog(rReflecto) > reflectoThresh)
+              {
+                forward();
+            }
+            //close the claw
+            closeClaw(); 
+            
+            //turn around
+            left();
+            left();
+            
+            while(analog(rLinePhoto) < lineThresh && analog(lLinePhoto) < lineThresh)
+              {
+                forward();
+            }
+            
+            right();
         }
     }
 }
@@ -40,6 +84,12 @@ void right()
     motor(rMotor, 75);
     motor(lMotor, -25);
     sleep(2.0);
+}
+
+void backup()
+{
+    motor(lMotor, -50);
+    motor(rMotor, -50);
 }
 
 void forward()
