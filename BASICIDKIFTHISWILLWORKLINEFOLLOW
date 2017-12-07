@@ -1,9 +1,16 @@
-#define lmotor 0
-#define rmotor 2
-#define claw 3
+#define lMotor 0
+#define rMotor 2
+#define clawMotor 3
 #define lineSensorL //ENTER NUMBER
 #define lineSensorR  //ENTER NUMBER
-#define blockSensor //
+#define lReflecto //ENTER NUMBER
+#define rReflecto //ENTER NUMBER
+
+int numLeft = 0;
+
+//TURN LEFT TIMING WILL NEED ADJUSTED TO ENSURE PERFECTO TURNS
+//TURN OPPOSITE WILL NEED ADJUSTED TO ENSURE PERFECT 180
+
 
 
 void main()
@@ -19,14 +26,14 @@ void main()
 void followLine
 { 
       //go forward
-      motor(motorL, 50);
-      motor(motorR, 50);
+      motor(lmotor, 50);
+      motor(rmotor, 50);
 
       //if left hits black line
       if((analog(lineSensorR) >= blackLine))
       {
-        motor(motorL,20);
-        motor(motorR,70);
+        motor(lmotor,20);
+        motor(rmotor,70);
         while((analog(lineSensorR) < blackLine))
         {
           sleep(0.1);
@@ -38,8 +45,8 @@ void followLine
       //if right hits black line
       else if((analog(lineSensorL) >= blackLine))
       {
-        motor(motorL,70);
-        motor(motorR,20);
+        motor(lmotor,70);
+        motor(rmotor,20);
         while((analog(lineSensorL) < blackLine))
         {
           sleep(0.1);
@@ -64,45 +71,73 @@ void followLine
 //decides what to do at a junction
 void junction()
 {
-   //(In theory) If a light is found to the left turn left
+   // THIS MIGHT NOT WORK AND ALL THIS ISH MIGHT NEED RETHOUGHT
+   //If a light is found to the left turn left
    if(analog(lLightPhoto) > 100)
    {
       foundBlock();
    }
    else
    {
-      followLine();
+      
+      if(numLeft%2 == 0)
+      {
+         followLine();
+      }
+      if(numLeft % 2 ==1)
+      {
+         turnLeft();
+         numLeft++;
+      }
    }  
 }
+
+
 
 //do block stuff
 void foundBlock()
 {  
 
      left();
-            
+     
+     //determines how close it is to the wall
      while(analog(lReflecto) > 20 && analog(rReflecto) > 20)
      {
         forward();
-     }       
+     }
+     
+     //is close so stop 
      stop();
+     
+     //grab the block
      closeClaw();
+     
+     //turn around
+     turnOppisite();
+     
+     //follow line again
+     lineFollow();     
 }
+
+
+
 
 ////////////// BASIC FUNCS ////////////
 
-void left()
+void turnOpposite()
 {
-    motor(rMotor, -25);
-    motor(lMotor, 75);
-    sleep(2.0);
+   motor(lMotor,-75);
+   motor(rMotor, 75);
+   sleep(2.5);
 }
 
-void right()
+void left()
 {
-    motor(rMotor, 75);
-    motor(lMotor, -25);
-    sleep(2.0);
+    forward();
+    sleep(1.0);
+    motor(rMotor, -75);
+    motor(lMotor, 75);
+    sleep(1.5);
 }
 
 void forward()
@@ -113,8 +148,8 @@ void forward()
 
 void stop()
 {
-   motor(lmotor,0);
-   motor(rmotor,0);
+   motor(lMotor,0);
+   motor(rMotor,0);
 }
 
 void openClaw()
