@@ -1,50 +1,91 @@
 #define lMotor 0
 #define rMotor 2
 
-#define clawMotor 3
+#define clawMotor 1
 
 #define lLine 2
 #define rLine 3
 
-#define lLightPhoto 4
+#define lLightPhoto 16
 #define rLightPhoto 5
 
-//#define reflecto 6 
+#define reflecto 6 
+#define wallRef 4
 
-#define lightThresh 100
+#define lightThresh 245
 #define lineThresh 50
-#define reflectoThresh 20
+#define reflectoThresh 160
+
+int leftNum = 0;
+int rightNum = 0;
+int gotBlock = 0;
+
 
 void main()
 {
     while(1)
       { 
-        //forward
-        forward();
+        
+        //follow line
         followLine();
-        searchForBlocks();
-        
-        //if you are at an intersection search for blocks
-        /*if(analog(lLine) >= lineThresh && analog(rLine) >= lineThresh)
-          {
-            //searchForBlocks(); 
-        beep();
-        stop();
-        }*/
-        
-        //figure out how to determine if we are at the end of the maze and can drop the block
     }
 }
 
 void followLine()
-{   
-    //adjust right
+{     
+    //go forward
+    forward();
+    
+    /*if(analog(wallRef) < reflectoThresh)
+      {
+        if(gotBlock == 1)
+          {
+            openClaw();
+        gotBlock = 0;
+        backup();
+        sleep(2.0);
+        left();
+        while(analog(rLine) < lineThresh)
+          {
+            sleep(0.1);
+        }
+        followLine(); 
+        }
+    }*/
+    
+    //check if it is off line
     if(analog(rLine) >= lineThresh)
       {
+        //correct
         motor(lMotor, 20);
         motor(rMotor, 70);
         while(analog(rLine) > lineThresh)
           {
+            //check if its at intersection
+            if(analog(lLine) > lineThresh)
+              {
+                stop();
+                //search for blocks
+                if(gotBlock == 0)
+                  searchForBlocks();
+                //keeps track of how many left turns
+                if(leftNum == 1)
+                  {
+                    correct();
+                    left();
+                    leftNum++;
+                }
+                //keeps track of how many right turns
+                if(rightNum == 1)
+                  {
+                    correct();
+                    right();
+                    rightNum++;
+                }
+                //forward
+                forward();
+            }    
+            //turn until its correct
             sleep(0.1);
         }
     }
@@ -52,11 +93,38 @@ void followLine()
     //adjust left
     if(analog(lLine) >= lineThresh)
       {
+        //correct
         motor(lMotor,70);
         motor(rMotor,20);
         while(analog(lLine) > lineThresh)
           {
-            sleep(0.1);
+            //check if its at an intersection
+           if(analog(rLine) > lineThresh)
+            {            
+                stop();
+                //search for blocks
+              if(gotBlock == 0)
+                  searchForBlocks();
+                //keeps track of left turns
+              if(leftNum == 1)
+                  {
+                    correct();
+                    left();
+                    leftNum++;
+                }
+                //keeps track of right turns
+                if(rightNum == 1)
+                  {
+                    correct();
+                    right();
+                    rightNum++;
+                }
+                //forward
+                forward();
+                
+          }
+              //turn until you find line
+              sleep(0.1);
         }
     }
 }
@@ -64,140 +132,129 @@ void followLine()
 void searchForBlocks()
 {
     //if there is a light on the left
-    if(analog(lLightPhoto) > lightThresh)
+    if(analog(lLightPhoto) < lightThresh)
       {
+        //count left turns
+        leftNum++;
+        gotBlock++;
+        
         //turn left and go to the block
         correct();
         left();
         //drive to the block
-        
-        /*while(analog(reflecto) > reflectoThresh)
+        while(analog(reflecto) > reflectoThresh)
           {
-            forward();
-        }*/
+            followLine();
+        }
         //close the claw
         closeClaw();
         //turn around
+        backup();
+        sleep(2.0);
         left();
-        left();
-        
-        //go back to the line
-        while(analog(rLine) < lineThresh && analog(lLine) < lineThresh)
+        while(analog(rLine) < lineThresh)
           {
-            forward();
+            sleep(0.1);
         }
-        
-        //turn left
-        left();
-        
-        deliverBlock();
+        //back to intersection
+        forward();
+        sleep(2.0);
+        //follow line after back at intersection
+        followLine();
     }
     
     //if there is a light on the right
-    if(analog(rLightPhoto) > lightThresh)
+    if(analog(rLightPhoto) < lightThresh)
       {
+        //count of right turns
+        rightNum++;
+        gotBlock++;
+        
         //turn right
         correct();
         right();
+        
+        
         //forward to the block
         while(analog(reflecto) > reflectoThresh)
           {
-            forward();
+            followLine();
         }
         //close the claw
         closeClaw(); 
         
         //turn around
+        backup();
+        sleep(2.0);
         left();
-        left();
-        
-        //go back to the line
-        while(analog(rLine) < lineThresh && analog(lLine) < lineThresh)
+        while(analog(lLine) < lineThresh)
           {
-            forward();
+            sleep(0.1);
         }
-        
-        //turn right
-        right();
-        
-        deliverBlock();
-        
+        //back to intersection
+        forward();
+        sleep(2.0);
+        //follow line after back at intersection
+        followLine();
     }
 }
 
-void deliverBlock()
-{
-    //travel to end of maze
-    while(analog(reflecto) > reflectoThresh)
-      {
-        followLine();
-    }
-    //drop block
-    openClaw();
-    //backup
-    backup();
-    sleep(0.5);
-    //turn around
-    left();
-    left();
-    //go back to start
-    while(analog(reflecto) > reflectoThresh)
-      {
-        followLine();
-    }
-    //turn around
-    left();
-    left();
-}
-
+//corrects distance between sensor and turn center
 void correct()
 {
     forward();
-    sleep(1.5);
+    sleep(0.7);
 }
 
+//turn left 90
 void left()
 {
     motor(rMotor, -75);
     motor(lMotor, 75);
-    sleep(1.85);
+    sleep(2.7);
 }
 
+//turn right 90
 void right()
 {
     motor(rMotor, 75);
     motor(lMotor, -75);
-    sleep(1.85);
+    sleep(2.7);
 }
 
+//backup
 void backup()
 {
     motor(lMotor, -50);
     motor(rMotor, -50);
 }
 
+//forward
 void forward()
 {
     motor(lMotor, 50);
     motor(rMotor, 50);
 }
 
+//stop
 void stop()
 {
     motor(lMotor, 0);
     motor(rMotor, 0);
 }
 
+//open claw
 void openClaw()
 {
     motor(clawMotor, 25);
-    sleep(0.3);
+    sleep(0.7);
     motor(clawMotor, 0);
 }
 
+//close claw
 void closeClaw()
 {
     motor(clawMotor, -25);
-    sleep(0.3);
+    sleep(0.7);
     motor(clawMotor, 0);
 }
